@@ -11,7 +11,7 @@ Environment variables are loaded from .env file.
 
 import os
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Type
 
 
 class Config:
@@ -107,6 +107,9 @@ class TestingConfig(Config):
         "TEST_DATABASE_URL",
         "sqlite:///:memory:"
     )
+
+    # SQLite does not support pool_size or max_overflow
+    SQLALCHEMY_ENGINE_OPTIONS: dict = {}
     
     # Disable rate limiting for tests
     RATELIMIT_ENABLED: bool = False
@@ -150,7 +153,7 @@ config_by_name = {
 }
 
 
-def get_config(config_name: Optional[str] = None) -> type[Config]:
+def get_config(config_name: Optional[str] = None) -> Type[Config]:
     """
     Get configuration class by name.
     
