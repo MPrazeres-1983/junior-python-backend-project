@@ -1,8 +1,11 @@
 # 🎯 Issue Tracker API
 
-[![CI/CD Pipeline](https://github.com/yourusername/issue-tracker-api/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/yourusername/issue-tracker-api/actions)
-[![codecov](https://codecov.io/gh/yourusername/issue-tracker-api/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/issue-tracker-api)
+[![CI/CD Pipeline](https://github.com/MPrazeres-1983/junior-python-backend-project/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/MPrazeres-1983/junior-python-backend-project/actions)
+
+[![codecov](https://codecov.io/gh/MPrazeres-1983/junior-python-backend-project/branch/main/graph/badge.svg)](https://codecov.io/gh/MPrazeres-1983/junior-python-backend-project)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
 A production-ready REST API for project and issue tracking, built with Flask, PostgreSQL, and modern best practices. Designed as a portfolio project demonstrating professional backend development skills.
@@ -336,10 +339,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [your-profile](https://linkedin.com/in/your-profile)
-- Portfolio: [your-website.com](https://your-website.com)
-
+- GitHub: [MPrazeres-1983](https://github.com/MPrazeres-1983)
+- LinkedIn: [Mário Prazeres](https://www.linkedin.com/in/mario-prazeres/)
+- 
 ## 🙏 Acknowledgments
 
 - Built as a portfolio project to demonstrate production-ready backend development
