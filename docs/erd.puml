@@ -1,0 +1,141 @@
+@startuml Issue Tracker ERD
+
+!define primary_key(x) <b><color:#b8861b><&key></color> x</b>
+!define foreign_key(x) <color:#aaaaaa><&key></color> x
+!define column(x) <color:#efefef><&media-record></color> x
+!define table(x) entity x << (T,#FFAAAA) >>
+
+' Entities
+entity "users" as users {
+  primary_key(id): INTEGER
+  --
+  column(username): VARCHAR(50) UNIQUE NOT NULL
+  column(email): VARCHAR(120) UNIQUE NOT NULL
+  column(password_hash): VARCHAR(255) NOT NULL
+  column(role): VARCHAR(20) NOT NULL
+  column(is_active): BOOLEAN NOT NULL
+  column(created_at): TIMESTAMP
+  column(updated_at): TIMESTAMP
+}
+
+entity "projects" as projects {
+  primary_key(id): INTEGER
+  --
+  column(name): VARCHAR(100) NOT NULL
+  column(description): TEXT
+  foreign_key(owner_id): INTEGER NOT NULL
+  column(is_active): BOOLEAN NOT NULL
+  column(created_at): TIMESTAMP
+  column(updated_at): TIMESTAMP
+}
+
+entity "issues" as issues {
+  primary_key(id): INTEGER
+  --
+  foreign_key(project_id): INTEGER NOT NULL
+  column(title): VARCHAR(200) NOT NULL
+  column(description): TEXT
+  column(status): VARCHAR(20) NOT NULL
+  column(priority): VARCHAR(20) NOT NULL
+  foreign_key(reporter_id): INTEGER
+  column(created_at): TIMESTAMP
+  column(updated_at): TIMESTAMP
+}
+
+entity "labels" as labels {
+  primary_key(id): INTEGER
+  --
+  column(name): VARCHAR(50) UNIQUE NOT NULL
+  column(color): VARCHAR(7) NOT NULL
+  column(created_at): TIMESTAMP
+  column(updated_at): TIMESTAMP
+}
+
+entity "comments" as comments {
+  primary_key(id): INTEGER
+  --
+  foreign_key(issue_id): INTEGER NOT NULL
+  foreign_key(author_id): INTEGER
+  column(content): TEXT NOT NULL
+  column(created_at): TIMESTAMP
+  column(updated_at): TIMESTAMP
+}
+
+entity "project_members" as project_members {
+  primary_key(id): INTEGER
+  --
+  foreign_key(project_id): INTEGER NOT NULL
+  foreign_key(user_id): INTEGER NOT NULL
+  column(role): VARCHAR(20) NOT NULL
+  column(joined_at): TIMESTAMP
+}
+
+entity "assignments" as assignments {
+  primary_key(id): INTEGER
+  --
+  foreign_key(issue_id): INTEGER NOT NULL
+  foreign_key(user_id): INTEGER NOT NULL
+  column(assigned_at): TIMESTAMP
+}
+
+entity "issue_labels" as issue_labels {
+  foreign_key(issue_id): INTEGER NOT NULL
+  foreign_key(label_id): INTEGER NOT NULL
+  column(created_at): TIMESTAMP
+  --
+  PRIMARY KEY (issue_id, label_id)
+}
+
+' Relationships
+
+' User owns Projects (1:N)
+users ||--o{ projects : "owns"
+
+' User is member of Projects (N:M via project_members)
+users ||--o{ project_members : "user_id"
+projects ||--o{ project_members : "project_id"
+
+' User reports Issues (1:N)
+users ||--o{ issues : "reports"
+
+' User is assigned to Issues (N:M via assignments)
+users ||--o{ assignments : "user_id"
+issues ||--o{ assignments : "issue_id"
+
+' User authors Comments (1:N)
+users ||--o{ comments : "authors"
+
+' Project contains Issues (1:N)
+projects ||--o{ issues : "contains"
+
+' Issue has Comments (1:N)
+issues ||--o{ comments : "has"
+
+' Issue has Labels (N:M via issue_labels)
+issues ||--o{ issue_labels : "issue_id"
+labels ||--o{ issue_labels : "label_id"
+
+' Notes
+note right of users
+  <b>Roles:</b> admin, developer, viewer
+  <b>Password:</b> Hashed with bcrypt (cost factor 12)
+end note
+
+note right of projects
+  <b>Owner:</b> User who created the project
+  <b>Members:</b> Users with access (via project_members)
+end note
+
+note right of issues
+  <b>Status:</b> open, in_progress, resolved, closed
+  <b>Priority:</b> low, medium, high, critical
+  <b>Reporter:</b> User who created the issue
+  <b>Assignees:</b> Users assigned to work on it
+end note
+
+note right of labels
+  <b>Color:</b> Hex color code (e.g., #FF5733)
+  <b>Usage:</b> Categorize and filter issues
+end note
+
+@enduml

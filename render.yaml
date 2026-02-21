@@ -1,0 +1,48 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: issue-tracker-db
+    env: docker
+    plan: free
+    region: oregon
+    databases:
+      - name: issue_tracker
+        user: issue_tracker_user
+
+  # Web Service (API)
+  - type: web
+    name: issue-tracker-api
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "alembic upgrade head && gunicorn 'src.app:create_app()' --bind 0.0.0.0:$PORT --workers 4 --timeout 120"
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FLASK_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: issue-tracker-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_ACCESS_TOKEN_EXPIRES
+        value: 900
+      - key: JWT_REFRESH_TOKEN_EXPIRES
+        value: 604800
+      - key: LOG_LEVEL
+        value: INFO
+      - key: LOG_FORMAT
+        value: json
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: RATELIMIT_ENABLED
+        value: "true"
+      - key: RATELIMIT_DEFAULT
+        value: "100 per minute"

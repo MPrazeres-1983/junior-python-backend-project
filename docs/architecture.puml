@@ -1,0 +1,177 @@
+@startuml Architecture Diagram
+
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+
+package "Cliente" {
+  [Web Browser / Mobile App] as Client
+  [cURL / Postman] as CLI
+}
+
+package "API Gateway / Load Balancer" {
+  [NGINX / Render] as Gateway
+}
+
+package "Flask Application" {
+  
+  package "Routes Layer" <<Rectangle>> #LightBlue {
+    component "Auth Routes\n/api/v1/auth" as AuthRoutes
+    component "Project Routes\n/api/v1/projects" as ProjectRoutes
+    component "Issue Routes\n/api/v1/issues" as IssueRoutes
+    component "Comment Routes\n/api/v1/comments" as CommentRoutes
+    component "Label Routes\n/api/v1/labels" as LabelRoutes
+    component "Health Route\n/health" as HealthRoute
+  }
+  
+  package "Middleware Layer" <<Rectangle>> #LightYellow {
+    component "JWT Authentication" as JWTAuth
+    component "Error Handler" as ErrorHandler
+    component "Rate Limiter" as RateLimiter
+    component "CORS" as CORS
+    component "Request Validation" as Validation
+  }
+  
+  package "Services Layer" <<Rectangle>> #LightGreen {
+    component "Auth Service" as AuthService
+    component "Project Service" as ProjectService
+    component "Issue Service" as IssueService
+    component "Comment Service" as CommentService
+    component "Label Service" as LabelService
+  }
+  
+  package "Repositories Layer" <<Rectangle>> #LightSalmon {
+    component "User Repository" as UserRepo
+    component "Project Repository" as ProjectRepo
+    component "Issue Repository" as IssueRepo
+    component "Comment Repository" as CommentRepo
+    component "Label Repository" as LabelRepo
+  }
+  
+  package "Models Layer (ORM)" <<Rectangle>> #Lavender {
+    component "User Model" as UserModel
+    component "Project Model" as ProjectModel
+    component "Issue Model" as IssueModel
+    component "Label Model" as LabelModel
+    component "Comment Model" as CommentModel
+    component "Associations" as Associations
+  }
+}
+
+database "PostgreSQL\nDatabase" as DB {
+  frame "Tables" {
+    storage "users"
+    storage "projects"
+    storage "issues"
+    storage "labels"
+    storage "comments"
+    storage "project_members"
+    storage "assignments"
+    storage "issue_labels"
+  }
+}
+
+cloud "External Services" {
+  [GitHub Actions\n(CI/CD)] as CI
+  [Render Platform\n(Deploy)] as Deploy
+  [Email Service\n(Future)] as Email
+}
+
+' Client connections
+Client --> Gateway : HTTPS Requests
+CLI --> Gateway : HTTPS Requests
+
+' Gateway to Routes
+Gateway --> AuthRoutes
+Gateway --> ProjectRoutes
+Gateway --> IssueRoutes
+Gateway --> CommentRoutes
+Gateway --> LabelRoutes
+Gateway --> HealthRoute
+
+' Middleware intercepts
+AuthRoutes ..> JWTAuth : <<uses>>
+ProjectRoutes ..> JWTAuth : <<uses>>
+IssueRoutes ..> JWTAuth : <<uses>>
+CommentRoutes ..> JWTAuth : <<uses>>
+LabelRoutes ..> JWTAuth : <<uses>>
+
+AuthRoutes ..> Validation : <<uses>>
+ProjectRoutes ..> Validation : <<uses>>
+IssueRoutes ..> Validation : <<uses>>
+
+AuthRoutes ..> ErrorHandler : <<uses>>
+AuthRoutes ..> RateLimiter : <<uses>>
+
+' Routes to Services
+AuthRoutes --> AuthService
+ProjectRoutes --> ProjectService
+IssueRoutes --> IssueService
+CommentRoutes --> CommentService
+LabelRoutes --> LabelService
+
+' Services to Repositories
+AuthService --> UserRepo
+ProjectService --> ProjectRepo
+ProjectService --> IssueRepo
+IssueService --> IssueRepo
+IssueService --> LabelRepo
+CommentService --> CommentRepo
+LabelService --> LabelRepo
+
+' Repositories to Models
+UserRepo --> UserModel
+ProjectRepo --> ProjectModel
+IssueRepo --> IssueModel
+CommentRepo --> CommentModel
+LabelRepo --> LabelModel
+
+ProjectRepo --> Associations
+IssueRepo --> Associations
+
+' Models to Database
+UserModel --> DB
+ProjectModel --> DB
+IssueModel --> DB
+LabelModel --> DB
+CommentModel --> DB
+Associations --> DB
+
+' CI/CD
+CI --> Deploy : Trigger deployment
+Deploy --> Gateway : Deploy new version
+
+note right of JWTAuth
+  <b>JWT Authentication</b>
+  - Access Token: 15 min
+  - Refresh Token: 7 days
+  - HS256 Algorithm
+  - Token validation
+end note
+
+note right of AuthService
+  <b>Password Security</b>
+  - bcrypt hashing
+  - Cost factor: 12
+  - Salt automatic
+  - No plain text storage
+end note
+
+note bottom of DB
+  <b>Database Features</b>
+  - Connection pooling
+  - Migrations (Alembic)
+  - Indexes for performance
+  - Foreign key constraints
+  - Check constraints
+end note
+
+note left of CI
+  <b>CI/CD Pipeline</b>
+  1. Lint (ruff, black)
+  2. Tests (pytest >= 70%)
+  3. Security (bandit)
+  4. Docker build
+  5. Auto-deploy (main branch)
+end note
+
+@enduml
