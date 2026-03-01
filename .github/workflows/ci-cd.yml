@@ -30,7 +30,7 @@ jobs:
         env:
           JWT_SECRET_KEY: test-secret-key
           FLASK_ENV: testing
-          DATABASE_URL: sqlite:///:memory: # Forçamos o SQLite de forma explícita aqui
+          DATABASE_URL: "sqlite:///:memory:"
         run: |
           # Agora corremos a pasta 'tests/' inteira e geramos o .xml que o Codecov adora
           pytest tests/ --cov-report=xml
