@@ -271,7 +271,7 @@ GitHub Actions pipeline runs on every push and pull request:
 4. **Security**: Dependency vulnerability scanning with Safety
 5. **Deploy**: Auto-deploy to Render on main branch (optional)
 
-View pipeline status: [![CI/CD](https://github.com/yourusername/issue-tracker-api/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/yourusername/issue-tracker-api/actions)
+View pipeline status: [![CI/CD](https://github.com/MPrazeres-1983/junior-python-backend-project/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/MPrazeres-1983/junior-python-backend-project/actions)
 
 ## 🌐 Deployment
 
@@ -338,10 +338,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Your Name**
+**Mário Prazeres**
 - GitHub: [MPrazeres-1983](https://github.com/MPrazeres-1983)
 - LinkedIn: [Mário Prazeres](https://www.linkedin.com/in/mario-prazeres/)
-- 
+  
 ## 🙏 Acknowledgments
 
 - Built as a portfolio project to demonstrate production-ready backend development
