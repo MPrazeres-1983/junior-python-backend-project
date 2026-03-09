@@ -39,9 +39,17 @@ jobs:
 
   prompt-eval:
     runs-on: ubuntu-latest
-    needs: test  # só corre se os testes passarem
+    needs: test
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install promptforge-llmops
+        run: pip install promptforge-llmops==0.2.1
 
       - name: Run PromptForge eval — issue classifier
         uses: MPrazeres-1983/promptforge@v1
