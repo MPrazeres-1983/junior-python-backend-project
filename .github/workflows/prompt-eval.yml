@@ -1,0 +1,32 @@
+name: Prompt Eval
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  prompt-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install promptforge-llmops
+        run: pip install promptforge-llmops==0.2.1
+
+      - name: Run PromptForge eval — issue classifier
+        uses: MPrazeres-1983/promptforge@v1
+        with:
+          prompt: prompts/issue_classifier.yaml
+          dataset: datasets/issue_classifier_golden.yaml
+          config: configs/issue_classifier.yaml
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          openai-base-url: ${{ secrets.OPENAI_BASE_URL }}
+          fail-on-regression: "true"
+        
